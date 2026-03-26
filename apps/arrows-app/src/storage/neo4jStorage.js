@@ -2,8 +2,9 @@ import { readGraph } from "./cypherReadQueries";
 import { writeQueriesForAction } from "./cypherWriteQueries";
 import { getPresentGraph } from "../selectors"
 import {gettingGraph} from "../actions/storage";
+import neo4jShim from "../shims/neo4j-driver-shim.js";
 
-const neo4j = require("neo4j-driver/lib/browser/neo4j-web.min.js").v1;
+const neo4j = neo4jShim.v1;
 
 let driver = null
 

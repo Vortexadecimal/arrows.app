@@ -4,6 +4,8 @@ import {render} from 'react-dom';
 import {Provider} from 'react-redux'
 import {createStore, applyMiddleware} from 'redux'
 import './index.css'
+
+
 import reducer from './reducers'
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
