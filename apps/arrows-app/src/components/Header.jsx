@@ -4,6 +4,12 @@ import { DiagramNameEditor } from "./DiagramNameEditor"
 import arrows_logo from "../images/arrows_logo.svg"
 import GoogleDriveShare from "./GoogleDriveShareWrapper"
 
+// Read the GraphSec origin from the URL query param (set when opened from GraphSec)
+const getGraphSecOrigin = () => {
+  const params = new URLSearchParams(window.location.search)
+  return params.get('origin') || null
+}
+
 const storageNames = {
   LOCAL_STORAGE: 'Web Browser storage',
   GOOGLE_DRIVE: 'Google Drive'
@@ -149,6 +155,31 @@ class Header extends PureComponent {
           {storageStatusMessage(this.props)}
         </Menu.Item>
         <Menu.Menu position={'right'}>
+          {/* GraphSec integration: "Send to GraphSec" button — only shown when origin param is present */}
+          {getGraphSecOrigin() && (
+            <Menu.Item>
+              <Button
+                onClick={() => {
+                  const origin = getGraphSecOrigin()
+                  const graphJson = this.props.graph
+                  if (window.opener) {
+                    window.opener.postMessage(
+                      { type: 'ARROWS_CONFIRM', data: graphJson },
+                      origin
+                    )
+                    window.close()
+                  } else {
+                    // Fallback: copy to clipboard if opener unavailable
+                    navigator.clipboard.writeText(JSON.stringify(graphJson, null, 2))
+                      .then(() => alert('JSON copied to clipboard — paste it back in GraphSec'))
+                  }
+                }}
+                icon='check'
+                color='green'
+                content='Send to GraphSec'
+              />
+            </Menu.Item>
+          )}
           <Menu.Item>
             <Button
               onClick={this.props.onExportClick}

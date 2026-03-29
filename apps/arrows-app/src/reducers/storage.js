@@ -186,14 +186,14 @@ const newLocalFile = () => {
 }
 
 export const handleImportMessage = (message) => {
-  if (message.origin !== "http://localhost:8000") return {
-    type: 'IGNORE'
-  };
-  console.log("Message!", message.data)
+  // Accept ARROWS_LOAD messages from any trusted origin (sent by GraphSec)
+  const data = (() => {
+    try { return typeof message.data === 'string' ? JSON.parse(message.data) : message.data } catch { return null }
+  })()
+  if (!data || data.type !== 'ARROWS_LOAD') return { type: 'IGNORE' }
 
-  const data = JSON.parse(message.data)
-  const graph = constructGraphFromFile(data).graph
-  const diagramName = data.diagramName || defaultName
+  const graph = constructGraphFromFile(data.payload).graph
+  const diagramName = data.payload.diagramName || defaultName
   const fileId = generateLocalFileId()
   saveGraphToLocalStorage(fileId, {graph, diagramName})
   return getFileFromLocalStorage(fileId)

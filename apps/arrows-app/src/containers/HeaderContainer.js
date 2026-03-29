@@ -20,7 +20,9 @@ const mapStateToProps = state => {
       undo: state.graph.past.length < 1,
       redo: state.graph.future.length < 1
     },
-    storage: state.storage
+    storage: state.storage,
+    // Expose the current graph for the Send to GraphSec postMessage
+    graph: state.graph.present
   }
 }
 
